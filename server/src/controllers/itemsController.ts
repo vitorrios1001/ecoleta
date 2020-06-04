@@ -7,7 +7,7 @@ class ItemsController {
   
     const serializedItems = items.map((item) => ({
       ...item,
-      image: `${process.env.HOST}/uploads/${item.image}`
+      image: `${process.env.URL_DOMAIN}/uploads/${item.image}`
     }))
   
     return res.json(serializedItems)
