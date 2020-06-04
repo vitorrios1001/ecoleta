@@ -62,7 +62,14 @@ class PointsController {
       uf,
     }
 
-    const insertedIds = await trx('points').insert(point)
+    let insertedIds: number[] = []
+      
+    try {
+      insertedIds = await trx('points').insert(point)
+    } catch (error) {
+      await trx.rollback()
+      return res.status(412).json({ message: 'Ocorreu um erro ao tentar gravar os dados'})
+    }
   
     const point_id = insertedIds[0]
   
@@ -71,8 +78,13 @@ class PointsController {
       point_id,
     }))
   
-    await trx('point_items').insert(pointItems)
-  
+    try {
+      await trx('point_items').insert(pointItems)
+    } catch (error) {
+      await trx.rollback()
+      return res.status(412).json({ message: 'Ocorreu um erro ao tentar gravar os dados'})
+    }
+    
     await trx.commit()
 
     return res.json({
